@@ -1,0 +1,36 @@
+---
+title: "R Markdown and Plotly Homework"
+author: "Jhonatan Zambrano"
+date: "3/3/2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## R Markdown
+
+This is a simple presentation in which we show a plot generated from plotly
+
+
+## Plot
+
+```{r pressure, echo=FALSE, message=F}
+library(tidyverse)
+library(plotly)
+system("wget -O dataset.zip http://archive.ics.uci.edu/ml/machine-learning-databases/00316/UCI%20CBM%20Dataset.zip")
+system("unzip dataset.zip")
+df<-read.table("UCI CBM Dataset/data.txt", header = F, sep = " ")
+columnas<-map_lgl(df, function(x)
+  ifelse(sum(!is.na(x))==0, F, T))
+df<-df[,columnas]
+names(df)<-c("Lever_pos", "Ship_spd", "GT_shft_trq", "GT_rpm", "Gen_rpm", "S_prop_trq", "P_prop_trq", "Turbine_temp",
+              "Comp_in_temp", "Comp_out_temp","Turbine_press", "Comp_in_press", "Comp_out_press", "Exhaust_press",
+              "Turb_inj_cnt", "Fuel_flow", "Comp_decay", "Turb_decay")
+df1<-filter(df, Ship_spd==3)
+g<-ggplot(data = df1)+
+  geom_point(aes(x=GT_rpm, y=Turbine_press, color = Comp_decay))
+ggplotly(g)
+```
+
